@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; connect-src *;">
+  <title>SecureHash Pro - Enhanced Blockchain File Registry</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #1a202c;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background Animation */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 1000;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-tab {
+      background: none;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .nav-tab.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 120px 2rem 40px;
+      text-align: center;
+      color: white;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideUp 1s ease-out;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      animation: slideUp 1s ease-out 0.2s both;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Connect Wallet Button */
+    .connect-wallet {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0 auto 3rem;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+      position: relative;
+      overflow: hidden;
+      min-width: 200px;
+      justify-content: center;
+    }
+
+    .connect-wallet:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
+    }
+
+    .connect-wallet.connected {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .connect-wallet.connected:hover {
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+    }
+
+    /* File Upload Section */
+    .upload-section {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .file-drop-zone {
+      border: 3px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .file-drop-zone:hover, .file-drop-zone.drag-over {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.02);
+    }
+
+    .file-drop-zone.has-files {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .drop-icon {
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 1rem;
+    }
+
+    .drop-text {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-subtext {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    /* File Metadata Form */
+    .metadata-form {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: white;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+
+    /* Selected Files List */
+    .selected-files {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .file-item-info {
+      flex: 1;
+    }
+
+    .file-item-remove {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .btn {
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover:before {
+      left: 100%;
+    }
+
+    .btn-upload {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-upload:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-verify {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+      box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-verify:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    }
+
+    .btn-batch {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+      box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-batch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Info Cards */
+    .info-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .info-card h3 {
+      color: white;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card p {
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+
+    /* Registry and History Tables */
+    .data-grid {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-height: 600px;
+      overflow: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: white;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .data-table th {
+      background: rgba(255, 255, 255, 0.1);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hash-cell {
+      font-family: monospace;
+      font-size: 0.8rem;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-success {
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .status-error {
+      color: #f87171;
+      font-weight: 600;
+    }
+
+    .status-warning {
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    /* Search and Filter */
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .filter-select {
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 0.9rem;
+      min-width: 150px;
+    }
+
+    /* Documentation Styles */
+    .doc-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .doc-section h2 {
+      color: white;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .doc-section h3 {
+      color: #e2e8f0;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .doc-section p, .doc-section li {
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-section ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .doc-section code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #fbbf24;
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .upload-section {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .nav-tabs {
+        display: none;
+      }
+
+      .container {
+        padding: 0 1rem 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+        SecureHash Pro
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="upload">Upload</button>
+        <button class="nav-tab" data-tab="registry">Public Registry</button>
+        <button class="nav-tab" data-tab="history">My History</button>
+        <button class="nav-tab" data-tab="docs">Documentation</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Enhanced Blockchain File Registry</h1>
+    <p>Advanced file integrity verification with categories, projects, and comprehensive tracking</p>
+  </section>
+
+  <div class="container">
+    <button class="connect-wallet" id="connectBtn">
+      <i class="fas fa-wallet"></i>
+      <span>Connect Wallet</span>
+      <div class="loading" id="connectLoading"></div>
+    </button>
+
+    <!-- Upload Tab -->
+    <div id="upload" class="tab-content active">
+      <div class="upload-section">
+        <div>
+          <div class="file-drop-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt drop-icon"></i>
+            <div class="drop-text">Drop files here or click to browse</div>
+            <div class="drop-subtext">Supports multiple files and all file types</div>
+            <input type="file" class="file-input" id="fileInput" multiple>
+            <div class="selected-files" id="selectedFiles" style="display: none;"></div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-upload" id="uploadBtn" disabled>
+              <i class="fas fa-upload"></i>
+              <span>Store Hash</span>
+              <div class="loading" id="uploadLoading"></div>
+            </button>
+            <button class="btn btn-verify" id="verifyBtn" disabled>
+              <i class="fas fa-search"></i>
+              <span>Verify Hash</span>
+              <div class="loading" id="verifyLoading"></div>
+            </button>
+            <button class="btn btn-batch" id="batchBtn" disabled>
+              <i class="fas fa-layer-group"></i>
+              <span>Batch Upload</span>
+              <div class="loading" id="batchLoading"></div>
+            </button>
+          </div>
+        </div>
+
+        <div class="metadata-form">
+          <h3 style="color: white; margin-bottom: 1rem;"><i class="fas fa-tags"></i> File Metadata</h3>
+          
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="">Select Category</option>
+              <option value="documents">Documents</option>
+              <option value="images">Images</option>
+              <option value="code">Code</option>
+              <option value="academic">Academic</option>
+              <option value="legal">Legal</option>
+              <option value="medical">Medical</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="project">Project Name</label>
+            <input type="text" id="project" placeholder="Enter project name (optional)">
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Brief description of the file(s)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="isPublic">
+              <label for="isPublic">Make publicly visible in registry</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3><i class="fas fa-info-circle"></i> Status</h3>
+        <p id="status">Please connect your wallet to continue</p>
+      </div>
+
+      <div class="info-card">
+        <h3><i class="fas fa-check-circle"></i> Result</h3>
+        <p id="result">Upload or verify files to see results</p>
+      </div>
+    </div>
+
+    <!-- Public Registry Tab -->
+    <div id="registry" class="tab-content">
+      <div class="controls">
+        <input type="text" class="search-input" id="registrySearch" placeholder="Search by filename, category, or project...">
+        <select class="filter-select" id="categoryFilter">
+          <option value="">All Categories</option>
+          <option value="documents">Documents</option>
+          <option value="images">Images</option>
+          <option value="code">Code</option>
+          <option value="academic">Academic</option>
+          <option value="legal">Legal</option>
+          <option value="medical">Medical</option>
+          <option value="other">Other</option>
+        </select>
+        <button class="btn btn-verify" id="refreshRegistry">
+          <i class="fas fa-sync-alt"></i>
+          Refresh
+        </button>
+      </div>
+
+      <div class="data-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Category</th>
+              <th>Project</th>
+              <th>Size</th>
+              <th>Uploader</th>
+              <th>Date</th>
+              <th>Hash</th>
+            </tr>
+          </thead>
+          <tbody id="registryTableBody">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><br>
+                Connect your wallet to load public registry
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- My History Tab -->
+    <div id="history" class="tab-content">
+      <div class="info-card">
+        <h3><i class="fas fa-history"></i> Verification & Upload History</h3>
+        <p>Track all your file operations including uploads, verifications, and batch operations.</p>
+      </div>
+
+      <div class="data-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Action</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Hash</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><br>
+                No history available yet
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Documentation Tab -->
+    <div id="docs" class="tab-content">
+      <div class="doc-section">
+        <h2><i class="fas fa-book"></i> SecureHash Pro Documentation</h2>
+        
+        <h3>🚀 Overview</h3>
+        <p>SecureHash Pro is an advanced blockchain-based file integrity verification system that allows users to create immutable records of file existence and verify file authenticity using cryptographic hashes.</p>
+
+        <h3>✨ Key Features</h3>
+        <ul>
+          <li><strong>Single File Upload:</strong> Store individual file hashes with metadata</li>
+          <li><strong>Batch Upload:</strong> Process multiple files simultaneously</li>
+          <li><strong>File Verification:</strong> Verify file integrity against blockchain records</li>
+          <li><strong>Categories & Projects:</strong> Organize files with custom categories and project names</li>
+          <li><strong>Public Registry:</strong> Browse publicly shared file records</li>
+          <li><strong>Verification History:</strong> Track all your operations and verifications</li>
+          <li><strong>Advanced Metadata:</strong> Add descriptions and control visibility</li>
+        </ul>
+
+        <h3>🔧 How to Use</h3>
+        <p><strong>Step 1: Connect Wallet</strong></p>
+        <p>Click "Connect Wallet" and approve the connection in MetaMask. Make sure you're connected to the correct blockchain network.</p>
+
+        <p><strong>Step 2: Select Files</strong></p>
+        <p>Drag and drop files into the upload zone or click to browse. You can select multiple files for batch operations.</p>
+
+        <p><strong>Step 3: Add Metadata</strong></p>
+        <p>Choose a category, add a project name, write a description, and decide if the file should be publicly visible.</p>
+
+        <p><strong>Step 4: Choose Operation</strong></p>
+        <ul>
+          <li><strong>Store Hash:</strong> Upload a single file's hash to the blockchain</li>
+          <li><strong>Verify Hash:</strong> Check if a file's hash exists on the blockchain</li>
+          <li><strong>Batch Upload:</strong> Upload multiple file hashes in one transaction</li>
+        </ul>
+
+        <h3>🛡️ Security Features</h3>
+        <ul>
+          <li><strong>Cryptographic Hashing:</strong> Uses Keccak-256 for secure file fingerprinting</li>
+          <li><strong>Blockchain Immutability:</strong> Records cannot be altered or deleted</li>
+          <li><strong>Timestamp Verification:</strong> Proof of existence at specific times</li>
+          <li><strong>Address Attribution:</strong> Links files to uploader addresses</li>
+        </ul>
+
+        <h3>💡 Use Cases</h3>
+        <ul>
+          <li><strong>Document Authentication:</strong> Prove legal documents existed at specific dates</li>
+          <li><strong>Intellectual Property:</strong> Timestamp creative works and research</li>
+          <li><strong>Academic Integrity:</strong> Verify originality of submissions</li>
+          <li><strong>Supply Chain:</strong> Track authentic product documentation</li>
+          <li><strong>Digital Forensics:</strong> Create tamper-proof evidence records</li>
+          <li><strong>Software Development:</strong> Version control and code authenticity</li>
+        </ul>
+
+        <h3>🔍 Technical Details</h3>
+        <p><strong>Hash Algorithm:</strong> Keccak-256 (same as Ethereum)</p>
+        <p><strong>Storage:</strong> Smart contract on blockchain + metadata</p>
+        <p><strong>Gas Costs:</strong> Optimized for batch operations</p>
+        <p><strong>Privacy:</strong> Only hashes stored, not file contents</p>
+
+        <h3>📊 Smart Contract Functions</h3>
+        <ul>
+          <li><code>storeFileHash()</code> - Store single file with metadata</li>
+          <li><code>storeBatchFileHashes()</code> - Store multiple files at once</li>
+          <li><code>verifyFileHash()</code> - Verify and get file details</li>
+          <li><code>getPublicFiles()</code> - Browse public registry</li>
+          <li><code>getUserVerifications()</code> - Get user's verification history</li>
+        </ul>
+
+        <h3>⚠️ Important Notes</h3>
+        <ul>
+          <li>Only file hashes are stored, not the actual files</li>
+          <li>Transactions require gas fees on the blockchain</li>
+          <li>Public files are visible to everyone</li>
+          <li>Verification history is permanent and immutable</li>
+          <li>Always backup your private keys and wallet</li>
+        </ul>
+
+        <h3>🆘 Troubleshooting</h3>
+        <p><strong>Connection Issues:</strong> Ensure MetaMask is installed and unlocked</p>
+        <p><strong>Transaction Failures:</strong> Check gas limits and network congestion</p>
+        <p><strong>Verification Fails:</strong> File may have been modified or never uploaded</p>
+        <p><strong>Slow Loading:</strong> Network latency affects blockchain reads</p>
+
+        <h3>📱 Browser Compatibility</h3>
+        <p>Works best with Chrome, Firefox, Safari, and Edge with MetaMask extension installed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
