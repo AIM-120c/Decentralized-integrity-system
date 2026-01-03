@@ -1,897 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; connect-src *;">
-  <title>SecureHash Pro - Enhanced Blockchain File Registry</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #1a202c;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Background Animation */
-    .bg-animation {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .bg-animation::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image:
-        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
-      animation: float 20s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-
-    /* Header */
-    .header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1rem 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      z-index: 1000;
-    }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .nav-tab {
-      background: none;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-    }
-
-    .nav-tab.active {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-tab:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Hero Section */
-    .hero {
-      padding: 120px 2rem 40px;
-      text-align: center;
-      color: white;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: slideUp 1s ease-out;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-      animation: slideUp 1s ease-out 0.2s both;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Main Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
-
-    /* Tab Content */
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.5s ease-out;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Connect Wallet Button */
-    .connect-wallet {
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 0 auto 3rem;
-      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
-      position: relative;
-      overflow: hidden;
-      min-width: 200px;
-      justify-content: center;
-    }
-
-    .connect-wallet:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
-    }
-
-    .connect-wallet.connected {
-      background: linear-gradient(135deg, #10b981, #059669);
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-    }
-
-    .connect-wallet.connected:hover {
-      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
-    }
-
-    /* File Upload Section */
-    .upload-section {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 2rem;
-      align-items: start;
-    }
-
-    .file-drop-zone {
-      border: 3px dashed rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      padding: 3rem 2rem;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .file-drop-zone:hover, .file-drop-zone.drag-over {
-      border-color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.1);
-      transform: scale(1.02);
-    }
-
-    .file-drop-zone.has-files {
-      border-color: #10b981;
-      background: rgba(16, 185, 129, 0.1);
-    }
-
-    .drop-icon {
-      font-size: 3rem;
-      color: rgba(255, 255, 255, 0.6);
-      margin-bottom: 1rem;
-    }
-
-    .drop-text {
-      color: white;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .drop-subtext {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.9rem;
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    /* File Metadata Form */
-    .metadata-form {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      color: white;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 0.9rem;
-    }
-
-    .form-group input::placeholder,
-    .form-group textarea::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: auto;
-    }
-
-    /* Selected Files List */
-    .selected-files {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .file-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      font-size: 0.9rem;
-      color: white;
-    }
-
-    .file-item-info {
-      flex: 1;
-    }
-
-    .file-item-remove {
-      background: #ef4444;
-      border: none;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1rem;
-      margin: 2rem 0;
-    }
-
-    .btn {
-      padding: 1rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-
-    .btn:hover:before {
-      left: 100%;
-    }
-
-    .btn-upload {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-      box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
-    }
-
-    .btn-upload:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-    }
-
-    .btn-verify {
-      background: linear-gradient(135deg, #06b6d4, #0891b2);
-      color: white;
-      box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
-    }
-
-    .btn-verify:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-    }
-
-    .btn-batch {
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-      color: white;
-      box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
-    }
-
-    .btn-batch:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Info Cards */
-    .info-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .info-card h3 {
-      color: white;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .info-card p {
-      color: rgba(255, 255, 255, 0.9);
-      line-height: 1.5;
-    }
-
-    /* Registry and History Tables */
-    .data-grid {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      max-height: 600px;
-      overflow: auto;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      color: white;
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .data-table th {
-      background: rgba(255, 255, 255, 0.1);
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-    }
-
-    .data-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .hash-cell {
-      font-family: monospace;
-      font-size: 0.8rem;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .status-success {
-      color: #34d399;
-      font-weight: 600;
-    }
-
-    .status-error {
-      color: #f87171;
-      font-weight: 600;
-    }
-
-    .status-warning {
-      color: #fbbf24;
-      font-weight: 600;
-    }
-
-    /* Search and Filter */
-    .controls {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .search-input {
-      flex: 1;
-      min-width: 200px;
-      padding: 0.75rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 25px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 0.9rem;
-    }
-
-    .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .filter-select {
-      padding: 0.75rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 25px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 0.9rem;
-      min-width: 150px;
-    }
-
-    /* Documentation Styles */
-    .doc-section {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .doc-section h2 {
-      color: white;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .doc-section h3 {
-      color: #e2e8f0;
-      margin: 1.5rem 0 0.5rem;
-    }
-
-    .doc-section p, .doc-section li {
-      color: rgba(255, 255, 255, 0.9);
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
-    }
-
-    .doc-section ul {
-      margin-left: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .doc-section code {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #fbbf24;
-    }
-
-    /* Loading Animation */
-    .loading {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-
-      .upload-section {
-        grid-template-columns: 1fr;
-      }
-
-      .action-buttons {
-        grid-template-columns: 1fr;
-      }
-
-      .controls {
-        flex-direction: column;
-      }
-
-      .nav-tabs {
-        display: none;
-      }
-
-      .container {
-        padding: 0 1rem 4rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="bg-animation"></div>
-  
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">
-        <i class="fas fa-shield-alt"></i>
-        SecureHash Pro
-      </div>
-      <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="upload">Upload</button>
-        <button class="nav-tab" data-tab="registry">Public Registry</button>
-        <button class="nav-tab" data-tab="history">My History</button>
-        <button class="nav-tab" data-tab="docs">Documentation</button>
-      </div>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <h1>Enhanced Blockchain File Registry</h1>
-    <p>Advanced file integrity verification with categories, projects, and comprehensive tracking</p>
-  </section>
-
-  <div class="container">
-    <button class="connect-wallet" id="connectBtn">
-      <i class="fas fa-wallet"></i>
-      <span>Connect Wallet</span>
-      <div class="loading" id="connectLoading"></div>
-    </button>
-
-    <!-- Upload Tab -->
-    <div id="upload" class="tab-content active">
-      <div class="upload-section">
-        <div>
-          <div class="file-drop-zone" id="dropZone">
-            <i class="fas fa-cloud-upload-alt drop-icon"></i>
-            <div class="drop-text">Drop files here or click to browse</div>
-            <div class="drop-subtext">Supports multiple files and all file types</div>
-            <input type="file" class="file-input" id="fileInput" multiple>
-            <div class="selected-files" id="selectedFiles" style="display: none;"></div>
-          </div>
-
-          <div class="action-buttons">
-            <button class="btn btn-upload" id="uploadBtn" disabled>
-              <i class="fas fa-upload"></i>
-              <span>Store Hash</span>
-              <div class="loading" id="uploadLoading"></div>
-            </button>
-            <button class="btn btn-verify" id="verifyBtn" disabled>
-              <i class="fas fa-search"></i>
-              <span>Verify Hash</span>
-              <div class="loading" id="verifyLoading"></div>
-            </button>
-            <button class="btn btn-batch" id="batchBtn" disabled>
-              <i class="fas fa-layer-group"></i>
-              <span>Batch Upload</span>
-              <div class="loading" id="batchLoading"></div>
-            </button>
-          </div>
-        </div>
-
-        <div class="metadata-form">
-          <h3 style="color: white; margin-bottom: 1rem;"><i class="fas fa-tags"></i> File Metadata</h3>
-          
-          <div class="form-group">
-            <label for="category">Category</label>
-            <select id="category">
-              <option value="">Select Category</option>
-              <option value="documents">Documents</option>
-              <option value="images">Images</option>
-              <option value="code">Code</option>
-              <option value="academic">Academic</option>
-              <option value="legal">Legal</option>
-              <option value="medical">Medical</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="project">Project Name</label>
-            <input type="text" id="project" placeholder="Enter project name (optional)">
-          </div>
-
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" placeholder="Brief description of the file(s)"></textarea>
-          </div>
-
-          <div class="form-group">
-            <div class="checkbox-group">
-              <input type="checkbox" id="isPublic">
-              <label for="isPublic">Make publicly visible in registry</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <h3><i class="fas fa-info-circle"></i> Status</h3>
-        <p id="status">Please connect your wallet to continue</p>
-      </div>
-
-      <div class="info-card">
-        <h3><i class="fas fa-check-circle"></i> Result</h3>
-        <p id="result">Upload or verify files to see results</p>
-      </div>
-    </div>
-
-    <!-- Public Registry Tab -->
-    <div id="registry" class="tab-content">
-      <div class="controls">
-        <input type="text" class="search-input" id="registrySearch" placeholder="Search by filename, category, or project...">
-        <select class="filter-select" id="categoryFilter">
-          <option value="">All Categories</option>
-          <option value="documents">Documents</option>
-          <option value="images">Images</option>
-          <option value="code">Code</option>
-          <option value="academic">Academic</option>
-          <option value="legal">Legal</option>
-          <option value="medical">Medical</option>
-          <option value="other">Other</option>
-        </select>
-        <button class="btn btn-verify" id="refreshRegistry">
-          <i class="fas fa-sync-alt"></i>
-          Refresh
-        </button>
-      </div>
-
-      <div class="data-grid">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>File Name</th>
-              <th>Category</th>
-              <th>Project</th>
-              <th>Size</th>
-              <th>Uploader</th>
-              <th>Date</th>
-              <th>Hash</th>
-            </tr>
-          </thead>
-          <tbody id="registryTableBody">
-            <tr>
-              <td colspan="7" style="text-align: center; padding: 2rem;">
-                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><br>
-                Connect your wallet to load public registry
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- My History Tab -->
-    <div id="history" class="tab-content">
-      <div class="info-card">
-        <h3><i class="fas fa-history"></i> Verification & Upload History</h3>
-        <p>Track all your file operations including uploads, verifications, and batch operations.</p>
-      </div>
-
-      <div class="data-grid">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>File Name</th>
-              <th>Action</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Hash</th>
-            </tr>
-          </thead>
-          <tbody id="historyTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; padding: 2rem;">
-                <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><br>
-                No history available yet
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Documentation Tab -->
-    <div id="docs" class="tab-content">
-      <div class="doc-section">
-        <h2><i class="fas fa-book"></i> SecureHash Pro Documentation</h2>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+
+    <title>Decentralized Integrity | Secure Digital Ledger</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' } 
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f3f6f8; /* Light Gray Background */
+            color: #334155; /* Slate 700 Text */
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
         
-        <h3>🚀 Overview</h3>
-        <p>SecureHash Pro is an advanced blockchain-based file integrity verification system that allows users to create immutable records of file existence and verify file authenticity using cryptographic hashes.</p>
+        /* Top Navigation (White Clean) */
+        .top-nav { background: #ffffff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); z-index: 100; }
+        .top-link { cursor: pointer; transition: all 0.2s; color: #64748b; font-weight: 500; font-size: 0.95rem; }
+        .top-link:hover { color: #0284c7; }
+        .top-link.active { color: #0284c7; font-weight: 700; position: relative; }
+        .top-link.active::after { content: ''; position: absolute; bottom: -21px; left: 0; width: 100%; height: 3px; background: #0284c7; }
 
-        <h3>✨ Key Features</h3>
-        <ul>
-          <li><strong>Single File Upload:</strong> Store individual file hashes with metadata</li>
-          <li><strong>Batch Upload:</strong> Process multiple files simultaneously</li>
-          <li><strong>File Verification:</strong> Verify file integrity against blockchain records</li>
-          <li><strong>Categories & Projects:</strong> Organize files with custom categories and project names</li>
-          <li><strong>Public Registry:</strong> Browse publicly shared file records</li>
-          <li><strong>Verification History:</strong> Track all your operations and verifications</li>
-          <li><strong>Advanced Metadata:</strong> Add descriptions and control visibility</li>
-        </ul>
+        /* Sidebar (White) */
+        .sidebar-light { background: #ffffff; border-right: 1px solid #e2e8f0; z-index: 50; }
+        
+        /* Cards (White with Soft Shadow) */
+        .clean-panel { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); 
+            border-radius: 1rem;
+        }
 
-        <h3>🔧 How to Use</h3>
-        <p><strong>Step 1: Connect Wallet</strong></p>
-        <p>Click "Connect Wallet" and approve the connection in MetaMask. Make sure you're connected to the correct blockchain network.</p>
+        /* Inputs (Light Gray) */
+        .clean-input { 
+            background-color: #f8fafc !important; 
+            border: 1px solid #cbd5e1; 
+            color: #1e293b !important; 
+            transition: all 0.2s ease; 
+        }
+        .clean-input:focus { 
+            outline: none; 
+            border-color: #0ea5e9; 
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); 
+        }
+        
+        /* Sidebar Items */
+        .nav-item { cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; color: #64748b; font-weight: 500; }
+        .nav-item:hover { background: #f0f9ff; color: #0284c7; }
+        .nav-item.active { background: #f0f9ff; border-left-color: #0284c7; color: #0c4a6e; font-weight: 700; }
+        .nav-item.active i { color: #0284c7; }
 
-        <p><strong>Step 2: Select Files</strong></p>
-        <p>Drag and drop files into the upload zone or click to browse. You can select multiple files for batch operations.</p>
+        /* Utilities */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Primary Button (Medical Blue) */
+        .btn-primary { 
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+            box-shadow: 0 4px 6px rgba(2, 132, 199, 0.2); 
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(2, 132, 199, 0.3); }
 
-        <p><strong>Step 3: Add Metadata</strong></p>
-        <p>Choose a category, add a project name, write a description, and decide if the file should be publicly visible.</p>
+        .verified-badge { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    </style>
+</head>
+<body class="flex flex-col h-screen antialiased">
 
-        <p><strong>Step 4: Choose Operation</strong></p>
-        <ul>
-          <li><strong>Store Hash:</strong> Upload a single file's hash to the blockchain</li>
-          <li><strong>Verify Hash:</strong> Check if a file's hash exists on the blockchain</li>
-          <li><strong>Batch Upload:</strong> Upload multiple file hashes in one transaction</li>
-        </ul>
+    <nav class="top-nav h-16 flex items-center justify-between px-8 flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand-600 flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-shield-alt text-xl"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-xl tracking-tight text-brand-900 leading-none">Decentralized Integrity</span>
+                <span class="text-[10px] font-semibold text-brand-500 uppercase tracking-widest">Secure Ledger</span>
+            </div>
+        </div>
+        <div class="flex gap-8">
+            <div class="top-link active" onclick="switchTopTab('home', this)">Dashboard</div>
+            <div class="top-link" onclick="switchTopTab('about', this)">About Us</div>
+            <div class="top-link" onclick="switchTopTab('contact', this)">Contact</div>
+            <div class="top-link text-brand-600" onclick="switchTopTab('apply', this)">Get Verified</div>
+        </div>
+    </nav>
 
-        <h3>🛡️ Security Features</h3>
-        <ul>
-          <li><strong>Cryptographic Hashing:</strong> Uses Keccak-256 for secure file fingerprinting</li>
-          <li><strong>Blockchain Immutability:</strong> Records cannot be altered or deleted</li>
-          <li><strong>Timestamp Verification:</strong> Proof of existence at specific times</li>
-          <li><strong>Address Attribution:</strong> Links files to uploader addresses</li>
-        </ul>
+    <div class="flex-1 relative overflow-hidden flex">
+        
+        <div id="page-home" class="w-full h-full flex">
+            
+            <aside class="w-64 sidebar-light flex flex-col flex-shrink-0">
+                <nav class="flex-1 overflow-y-auto py-6 space-y-1 pl-0">
+                    <div class="px-6 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-2">Tools</div>
+                    <div class="nav-item active px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'upload')"><i class="fas fa-file-upload w-5 text-center text-slate-400"></i> <span>Upload Record</span></div>
+                    <div class="nav-item px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'verify')"><i class="fas fa-check-double w-5 text-center text-slate-400"></i> <span>Verify Integrity</span></div>
+                    <div class="nav-item px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'history')"><i class="fas fa-history w-5 text-center text-slate-400"></i> <span>My Records</span></div>
 
-        <h3>💡 Use Cases</h3>
-        <ul>
-          <li><strong>Document Authentication:</strong> Prove legal documents existed at specific dates</li>
-          <li><strong>Intellectual Property:</strong> Timestamp creative works and research</li>
-          <li><strong>Academic Integrity:</strong> Verify originality of submissions</li>
-          <li><strong>Supply Chain:</strong> Track authentic product documentation</li>
-          <li><strong>Digital Forensics:</strong> Create tamper-proof evidence records</li>
-          <li><strong>Software Development:</strong> Version control and code authenticity</li>
-        </ul>
+                    <div class="px-6 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-8">Database</div>
+                    <div class="nav-item px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'general')"><i class="fas fa-globe w-5 text-center text-slate-400"></i> <span>Public Repository</span></div>
+                    <div class="nav-item px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'forensics')"><i class="fas fa-gavel w-5 text-center text-slate-400"></i> <span>Forensics Data</span></div>
+                    <div class="nav-item px-6 py-4 flex items-center gap-3" onclick="handleNavClick(this, 'education')"><i class="fas fa-graduation-cap w-5 text-center text-slate-400"></i> <span>Academic Data</span></div>
+                    
+                    <div id="adminNavItem" class="hidden mt-6 bg-amber-50 mx-4 rounded-lg border border-amber-100">
+                         <div class="nav-item px-4 py-3 flex items-center gap-3 text-amber-700 hover:text-amber-800" onclick="handleNavClick(this, 'admin')"><i class="fas fa-lock w-5 text-center text-amber-600"></i> <span>Admin Panel</span></div>
+                    </div>
+                </nav>
+            </aside>
 
-        <h3>🔍 Technical Details</h3>
-        <p><strong>Hash Algorithm:</strong> Keccak-256 (same as Ethereum)</p>
-        <p><strong>Storage:</strong> Smart contract on blockchain + metadata</p>
-        <p><strong>Gas Costs:</strong> Optimized for batch operations</p>
-        <p><strong>Privacy:</strong> Only hashes stored, not file contents</p>
+            <main class="flex-1 flex flex-col relative bg-slate-50 overflow-hidden">
+                <header class="h-16 px-10 flex items-center justify-between flex-shrink-0 border-b border-slate-200 bg-white">
+                    <div>
+                        <h2 id="headerTitle" class="text-xl font-bold text-slate-800">Upload Record</h2>
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-medium"><span class="w-2 h-2 rounded-full bg-green-500"></span> Sepolia Network Active</div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div id="userIdentityDisplay" class="hidden text-right">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Logged In As</div>
+                            <div id="idName" class="text-sm font-bold text-brand-600">Loading...</div>
+                        </div>
+                        <button id="connectBtn" onclick="connectWallet()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-6 rounded-full text-xs font-bold transition flex items-center gap-2 border border-slate-300">
+                            <i class="fas fa-wallet text-slate-500"></i> <span>Connect Wallet</span>
+                        </button>
+                    </div>
+                </header>
 
-        <h3>📊 Smart Contract Functions</h3>
-        <ul>
-          <li><code>storeFileHash()</code> - Store single file with metadata</li>
-          <li><code>storeBatchFileHashes()</code> - Store multiple files at once</li>
-          <li><code>verifyFileHash()</code> - Verify and get file details</li>
-          <li><code>getPublicFiles()</code> - Browse public registry</li>
-          <li><code>getUserVerifications()</code> - Get user's verification history</li>
-        </ul>
+                <div class="flex-1 overflow-y-auto p-10 scrollbar-hide relative">
+                    
+                    <div id="uploadView" class="view-section max-w-6xl mx-auto fade-in">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <div class="lg:col-span-7">
+                                <div class="clean-panel h-full min-h-[500px] flex flex-col p-8 relative">
+                                    <div class="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 flex-1 flex flex-col items-center justify-center relative group hover:border-brand-500 hover:bg-blue-50 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                                        <input type="file" id="fileInput" class="hidden" multiple onchange="handleFileSelect(this)">
+                                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition"><i class="fas fa-cloud-upload-alt text-4xl text-brand-500"></i></div>
+                                        <h3 class="text-xl font-bold text-slate-700">Drag & Drop Files</h3>
+                                        <p class="text-sm text-slate-400 mt-2">or click to browse local drive</p>
+                                    </div>
+                                    <div id="selectedFilesList" class="w-full mt-6 space-y-2 max-h-48 overflow-y-auto"></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5">
+                                <div class="clean-panel p-10 h-full flex flex-col justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-800 mb-6 pb-4 border-b border-slate-100">Document Metadata</h3>
+                                        <div class="space-y-5">
+                                            <div>
+                                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Identity (Officer/User)</label>
+                                                <input type="text" id="uploaderName" placeholder="Full Name" class="w-full p-4 mt-2 rounded-lg clean-input">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Case Reference ID</label>
+                                                <input type="text" id="projectName" placeholder="e.g. CASE-2026-X" class="w-full p-4 mt-2 rounded-lg clean-input">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Classification</label>
+                                                <div class="relative">
+                                                    <select id="category" class="w-full p-4 mt-2 rounded-lg clean-input appearance-none bg-white">
+                                                        <option value="General">General Document</option>
+                                                        <option value="Evidence">Forensic Evidence</option>
+                                                        <option value="Logs">Server/Audit Logs</option>
+                                                        <option value="Degree">Academic Degree</option>
+                                                        <option value="Certificate">Certificate</option>
+                                                    </select>
+                                                    <i class="fas fa-chevron-down absolute right-4 top-[3.2rem] text-slate-400 pointer-events-none"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-8">
+                                        <button onclick="handleBatchUpload()" class="btn-primary w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+                                            <i class="fas fa-file-signature"></i> Sign & Upload to Chain
+                                        </button>
+                                        <div id="statusMsg" class="text-center mt-4 text-sm font-bold text-slate-500"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <h3>⚠️ Important Notes</h3>
-        <ul>
-          <li>Only file hashes are stored, not the actual files</li>
-          <li>Transactions require gas fees on the blockchain</li>
-          <li>Public files are visible to everyone</li>
-          <li>Verification history is permanent and immutable</li>
-          <li>Always backup your private keys and wallet</li>
-        </ul>
+                    <div id="verifyView" class="view-section hidden fade-in max-w-3xl mx-auto">
+                        <div class="clean-panel p-12 text-center">
+                            <h2 class="text-3xl font-bold text-slate-800 mb-3">Verification Portal</h2>
+                            <p class="text-slate-500 mb-8">Validate authenticity by uploading the original file or checking its hash.</p>
+                            
+                            <div class="flex justify-center gap-4 mb-8">
+                                <button onclick="toggleVerifyMode('file')" id="btnVerifyFile" class="px-6 py-2 rounded-lg bg-brand-600 text-white font-bold transition">File Check</button>
+                                <button onclick="toggleVerifyMode('hash')" id="btnVerifyHash" class="px-6 py-2 rounded-lg bg-slate-200 text-slate-600 font-bold transition hover:bg-slate-300">Hash Check</button>
+                            </div>
 
-        <h3>🆘 Troubleshooting</h3>
-        <p><strong>Connection Issues:</strong> Ensure MetaMask is installed and unlocked</p>
-        <p><strong>Transaction Failures:</strong> Check gas limits and network congestion</p>
-        <p><strong>Verification Fails:</strong> File may have been modified or never uploaded</p>
-        <p><strong>Slow Loading:</strong> Network latency affects blockchain reads</p>
+                            <div id="verifyFileInputArea" class="border-2 border-dashed border-slate-300 rounded-xl p-10 cursor-pointer hover:border-brand-500 bg-slate-50 transition relative mb-6">
+                                <input type="file" id="verifyInput" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleVerifyFileSelect(this)">
+                                <i class="fas fa-search text-5xl text-slate-300 mb-4"></i>
+                                <p class="text-lg font-bold text-slate-600">Click to Select File</p>
+                            </div>
+                            
+                            <div id="verifyHashInputArea" class="hidden mb-6">
+                                <input type="text" id="manualHashInput" placeholder="Paste SHA-256 Hash (0x...)" class="w-full p-4 rounded-xl clean-input font-mono text-center">
+                                <button onclick="handleManualHashVerify()" class="mt-4 w-full py-3 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-500 transition">Verify Hash</button>
+                            </div>
 
-        <h3>📱 Browser Compatibility</h3>
-        <p>Works best with Chrome, Firefox, Safari, and Edge with MetaMask extension installed.</p>
-      </div>
+                            <div id="verificationResult" class="hidden text-left mt-8"></div>
+                        </div>
+                    </div>
+
+                    <div id="registryView" class="view-section hidden fade-in">
+                        <div class="clean-panel overflow-hidden min-h-[600px]">
+                           <header class="flex justify-between items-center p-6 border-b border-slate-200 bg-slate-50">
+                               <h2 id="registryTitle" class="text-xl font-bold text-slate-700">Public Registry</h2>
+                               <div class="flex gap-2">
+                                   <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search Case ID, Name..." class="clean-input px-4 py-2 rounded-lg text-sm w-64 bg-white">
+                                   <button onclick="loadRegistry()" class="bg-white border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600"><i class="fas fa-sync-alt"></i></button>
+                               </div>
+                           </header>
+                           <table class="w-full text-left">
+                               <thead class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wider font-bold">
+                                   <tr><th class="p-5">File Details</th><th class="p-5">Type</th><th class="p-5">Signer Identity</th><th class="p-5">Timestamp</th></tr>
+                               </thead>
+                               <tbody id="registryBody" class="text-sm divide-y divide-slate-100 bg-white"></tbody>
+                           </table>
+                       </div>
+                   </div>
+
+                   <div id="historyView" class="view-section hidden fade-in">
+                        <div class="clean-panel overflow-hidden min-h-[600px]">
+                            <header class="flex justify-between items-center p-6 border-b border-slate-200 bg-slate-50">
+                                <h2 class="text-xl font-bold text-slate-700">My Upload History</h2>
+                                <button onclick="loadHistory()" class="bg-white border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600"><i class="fas fa-sync-alt"></i></button>
+                            </header>
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wider font-bold">
+                                    <tr><th class="p-5">File Details</th><th class="p-5">Category</th><th class="p-5">Case ID</th><th class="p-5">Timestamp</th></tr>
+                                </thead>
+                                <tbody id="historyBody" class="text-sm divide-y divide-slate-100 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="adminView" class="view-section hidden fade-in">
+                        <div class="max-w-xl mx-auto mt-10">
+                           <div class="clean-panel p-10 border-l-4 border-amber-400">
+                                <h2 class="text-2xl font-bold text-amber-700 mb-4"><i class="fas fa-crown mr-2"></i>Admin Authority</h2>
+                                <p class="text-slate-500 mb-6">Grant Trusted Entity Status (Blue Badge) to organizations.</p>
+                                <div class="flex gap-3">
+                                    <input type="text" id="adminInputAddr" placeholder="Wallet Address (0x...)" class="flex-1 clean-input p-4 rounded-xl font-mono">
+                                    <button onclick="handleAdminVerifyUser()" class="bg-amber-500 text-white font-bold px-8 rounded-xl hover:bg-amber-600 transition shadow-lg shadow-amber-200">Verify</button>
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="page-about" class="w-full h-full hidden overflow-y-auto p-12 fade-in bg-white">
+            <div class="max-w-5xl mx-auto text-center mt-10">
+                <span class="text-brand-600 font-bold tracking-widest uppercase text-xs">Our Mission</span>
+                <h1 class="text-5xl font-extrabold text-slate-900 mt-2 mb-6">Securing Truth with Blockchain.</h1>
+                <p class="text-xl text-slate-500 mb-16 max-w-2xl mx-auto">We provide an immutable, decentralized ledger for forensic evidence, academic credentials, and sensitive legal documents.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left mb-20">
+                    <div class="clean-panel p-8 hover:-translate-y-1 transition duration-300">
+                        <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6"><i class="fas fa-shield-alt"></i></div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-3">Tamper Proof</h3>
+                        <p class="text-slate-500 leading-relaxed">Data hashed on the Sepolia chain cannot be altered, ensuring absolute integrity.</p>
+                    </div>
+                    <div class="clean-panel p-8 hover:-translate-y-1 transition duration-300">
+                        <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-600 text-2xl mb-6"><i class="fas fa-search"></i></div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-3">Forensic Audit</h3>
+                        <p class="text-slate-500 leading-relaxed">Maintain a perfect Chain of Custody. Track who uploaded what and exactly when it happened.</p>
+                    </div>
+                    <div class="clean-panel p-8 hover:-translate-y-1 transition duration-300">
+                        <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6"><i class="fas fa-certificate"></i></div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-3">Verified Entities</h3>
+                        <p class="text-slate-500 leading-relaxed">Trusted organizations get "Blue Badge" status to issue official degrees and certificates.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-3xl p-12">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-12">Leadership Team</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <div class="w-24 h-24 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">👨‍💻</div>
+                            <h3 class="text-lg font-bold text-slate-800">Shahid Irfan</h3><p class="text-sm text-brand-600 font-bold">Lead Developer</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <div class="w-24 h-24 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">🚀</div>
+                            <h3 class="text-lg font-bold text-slate-800">Alyan Khan</h3><p class="text-sm text-brand-600 font-bold">Blockchain Architect</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <div class="w-24 h-24 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">🎨</div>
+                            <h3 class="text-lg font-bold text-slate-800">Arslan Asghar</h3><p class="text-sm text-brand-600 font-bold">Product Designer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-contact" class="w-full h-full hidden overflow-y-auto p-12 fade-in bg-white">
+            <div class="max-w-3xl mx-auto mt-10">
+                <h2 class="text-4xl font-extrabold text-slate-900 mb-8 text-center">Contact Support</h2>
+                <div class="clean-panel p-10 rounded-3xl space-y-6">
+                    <div class="flex items-center gap-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-brand-600 shadow-sm"><i class="fas fa-envelope"></i></div>
+                        <div><p class="text-xs text-slate-400 uppercase font-bold">Technical Support</p><a href="mailto:arslanasgharop@gmail.com" class="text-lg font-bold text-slate-800 hover:text-brand-600">arslanasgharop@gmail.com</a></div>
+                    </div>
+                    <div class="flex items-center gap-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-brand-600 shadow-sm"><i class="fas fa-envelope"></i></div>
+                        <div><p class="text-xs text-slate-400 uppercase font-bold">Sales & Partnerships</p><a href="mailto:alyan.knadil@gmail.com" class="text-lg font-bold text-slate-800 hover:text-brand-600">alyan.knadil@gmail.com</a></div>
+                    </div>
+                    <div class="flex items-center gap-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-brand-600 shadow-sm"><i class="fas fa-envelope"></i></div>
+                        <div><p class="text-xs text-slate-400 uppercase font-bold">General Inquiries</p><a href="mailto:shahidirfans22bince@gmail.com" class="text-lg font-bold text-slate-800 hover:text-brand-600">shahidirfans22bince@gmail.com</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-apply" class="w-full h-full hidden overflow-y-auto p-12 fade-in bg-white">
+            <div class="max-w-2xl mx-auto mt-10">
+                <div class="text-center mb-10">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Official Partners</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4">Apply for Verification</h2>
+                    <p class="text-slate-500 mt-2">Verified entities (Universities, Police, Gov) receive a Trusted Badge.</p>
+                </div>
+                
+                <div class="clean-panel p-10">
+                    <form action="https://formspree.io/f/xbdlgylg" method="POST" class="space-y-6">
+                        <div><label class="text-xs font-bold text-slate-500 uppercase">Organization Name</label><input type="text" name="org_name" required class="w-full p-4 mt-2 rounded-lg clean-input" placeholder="e.g. City Hospital"></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase">Wallet Address</label><input type="text" name="wallet_address" required class="w-full p-4 mt-2 rounded-lg clean-input font-mono" placeholder="0x..."></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase">Official Email</label><input type="email" name="email" required class="w-full p-4 mt-2 rounded-lg clean-input" placeholder="admin@hospital.com"></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase">Reason</label><textarea name="reason" rows="3" required class="w-full p-4 mt-2 rounded-lg clean-input" placeholder="Purpose of verification..."></textarea></div>
+                        <button type="submit" class="btn-primary w-full py-4 rounded-xl font-bold text-lg shadow-lg">Submit Application</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- External Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="app.js"></script>
+    <script>
+        // --- ⚠️ YOUR CONTRACT ADDRESS IS PRESERVED HERE ⚠️ ---
+        const CONTRACT_ADDRESS = "0x7877b7810C5Faabc39dC6b08191bea13C11651f4"; 
+
+        // --- NAVIGATION ---
+        function switchTopTab(tabName, element) {
+            document.querySelectorAll('.top-link').forEach(el => el.classList.remove('active')); element.classList.add('active');
+            ['home', 'about', 'contact', 'apply'].forEach(t => document.getElementById('page-' + t).classList.add('hidden'));
+            const page = document.getElementById('page-' + tabName);
+            page.classList.remove('hidden');
+            if(tabName === 'home') page.classList.add('flex'); // Keep dashboard layout
+        }
+
+        const ABI = [
+            "function storeFileHash(bytes32,uint256,bool,bytes,tuple(string,string,string,string,string))",
+            "function setTrustStatus(address, bool)",
+            "function verifyFile(bytes32) view returns (bool, tuple(bytes32 fileHash, string fileName, string category, string projectName, string uploaderName, uint256 fileSize, address uploader, uint256 timestamp, bool isPublic, string description, bytes signature, bool isVerifiedAccount))",
+            "function getPublicFileHashes() view returns (bytes32[])",
+            "function getUserFileHashes(address) view returns (bytes32[])",
+            "function owner() view returns (address)",
+            "function fileExists(bytes32) view returns (bool)",
+            "function getIdentity(address) view returns (string)"
+        ];
+
+        let provider, signer, contract, userAddress, registeredName, currentFilter = 'general', selectedFiles = [], allRegistryData = [];
+
+        function handleNavClick(element, target) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active');
+            const titleMap = { 'upload': 'Upload Record', 'verify': 'Verify Integrity', 'general': 'Public Registry', 'forensics': 'Forensics Data', 'education': 'Academic Data', 'admin': 'Admin Panel', 'history': 'My Upload History' };
+            document.getElementById('headerTitle').innerText = titleMap[target];
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            if(['general', 'forensics', 'education'].includes(target)) { document.getElementById('registryView').classList.remove('hidden'); currentFilter = target; loadRegistry(); } 
+            else if (target === 'history') { document.getElementById('historyView').classList.remove('hidden'); loadHistory(); } 
+            else { document.getElementById(target + 'View').classList.remove('hidden'); }
+        }
+
+        function toggleVerifyMode(mode) {
+            if(mode === 'file') {
+                document.getElementById('verifyFileInputArea').classList.remove('hidden'); document.getElementById('verifyHashInputArea').classList.add('hidden');
+                document.getElementById('btnVerifyFile').classList.replace('bg-slate-200','bg-brand-600'); document.getElementById('btnVerifyFile').classList.replace('text-slate-600','text-white');
+                document.getElementById('btnVerifyHash').classList.replace('bg-brand-600','bg-slate-200'); document.getElementById('btnVerifyHash').classList.replace('text-white','text-slate-600');
+            } else {
+                document.getElementById('verifyFileInputArea').classList.add('hidden'); document.getElementById('verifyHashInputArea').classList.remove('hidden');
+                document.getElementById('btnVerifyHash').classList.replace('bg-slate-200','bg-brand-600'); document.getElementById('btnVerifyHash').classList.replace('text-slate-600','text-white');
+                document.getElementById('btnVerifyFile').classList.replace('bg-brand-600','bg-slate-200'); document.getElementById('btnVerifyFile').classList.replace('text-white','text-slate-600');
+            }
+            document.getElementById('verificationResult').classList.add('hidden');
+        }
+
+        async function handleVerifyFileSelect(input) { if(!contract) return alert("Connect Wallet First!"); const file = input.files[0]; if(!file) return; try { const buffer = await file.arrayBuffer(); const hash = ethers.utils.keccak256(new Uint8Array(buffer)); checkHashOnChain(hash); } catch(e) { console.error(e); alert("Error reading file"); } }
+        async function handleManualHashVerify() { if(!contract) return alert("Connect Wallet First!"); const hash = document.getElementById('manualHashInput').value.trim(); if(!hash.startsWith('0x')) return alert("Invalid Hash format"); checkHashOnChain(hash); }
+        async function checkHashOnChain(hash) {
+            const resDiv = document.getElementById('verificationResult'); resDiv.classList.remove('hidden'); resDiv.innerHTML = '<div class="text-center text-slate-500"><i class="fas fa-spinner fa-spin mr-2"></i>Searching Blockchain...</div>';
+            try { const data = await contract.verifyFile(hash); if(data[0]) { const r = data[1]; const badge = r.isVerifiedAccount ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> VERIFIED ENTITY</span>' : ''; resDiv.className = "text-left mt-8 p-6 bg-green-50 border border-green-200 rounded-xl"; resDiv.innerHTML = `<div class="flex items-center gap-4 mb-4 border-b border-green-200 pb-4"><div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-green-600 text-2xl shadow-sm"><i class="fas fa-check"></i></div><div><h3 class="text-xl font-bold text-slate-800">Authentic Record</h3><p class="text-green-700 text-sm font-bold">Successfully Verified on Sepolia</p></div></div><div class="grid grid-cols-2 gap-4 text-sm text-slate-600"><div><span class="block text-slate-400 text-xs font-bold uppercase">File Name</span><span class="font-bold text-slate-800">${r.fileName}</span></div><div><span class="block text-slate-400 text-xs font-bold uppercase">Category</span>${r.category}</div><div class="col-span-2"><span class="block text-slate-400 text-xs font-bold uppercase">Case Reference</span>${r.projectName}</div><div class="col-span-2"><span class="block text-slate-400 text-xs font-bold uppercase">Signer Identity</span><div class="flex items-center gap-2 font-bold text-brand-700">${r.uploaderName} ${badge}</div><div class="text-xs font-mono text-slate-400">${r.uploader}</div></div><div class="col-span-2 pt-2 border-t border-green-200/50"><span class="block text-slate-400 text-xs font-bold uppercase">Hash</span><span class="font-mono text-xs break-all">${r.fileHash}</span></div></div>`; } else { resDiv.className = "text-center mt-8 p-8 bg-red-50 border border-red-100 rounded-xl"; resDiv.innerHTML = `<div class="text-red-400 text-5xl mb-4"><i class="fas fa-times-circle"></i></div><h3 class="text-xl font-bold text-slate-800 mb-1">No Record Found</h3><p class="text-slate-500 text-sm">This file does not exist on the registry or has been modified.</p>`; } } catch(e) { console.error(e); resDiv.innerHTML = `<div class="text-red-500">Error: ${e.message}</div>`; }
+        }
+
+        function handleFileSelect(input) { selectedFiles = [...selectedFiles, ...Array.from(input.files)]; renderFileList(); input.value = ''; }
+        function removeFile(index) { selectedFiles.splice(index, 1); renderFileList(); }
+        function renderFileList() { const listEl = document.getElementById('selectedFilesList'); listEl.innerHTML = ''; selectedFiles.forEach((file, index) => { listEl.innerHTML += `<div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-sm mb-2"><div class="flex items-center gap-3 overflow-hidden"><i class="fas fa-file text-brand-500"></i><span class="truncate font-medium text-slate-700">${file.name}</span><span class="text-xs text-slate-400">(${(file.size/1024).toFixed(1)} KB)</span></div><button onclick="removeFile(${index})" class="text-slate-400 hover:text-red-500 transition px-2"><i class="fas fa-trash"></i></button></div>`; }); }
+        
+        async function handleBatchUpload() {
+            if(!contract) return alert("Connect Wallet!");
+            if(selectedFiles.length === 0) return alert("No files!");
+            const inputName = document.getElementById('uploaderName').value;
+            const finalName = registeredName || inputName || "Anonymous";
+            const caseId = document.getElementById('projectName').value || "No-Case";
+            const category = document.getElementById('category').value;
+            if(!registeredName && inputName) if(!confirm(`Register identity as "${inputName}"?`)) return;
+            else if(!confirm(`Upload ${selectedFiles.length} files?`)) return;
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i]; document.getElementById('statusMsg').innerText = `Uploading ${i+1}/${selectedFiles.length}: ${file.name}...`;
+                try {
+                    const buffer = await file.arrayBuffer(); const hash = ethers.utils.keccak256(new Uint8Array(buffer)); const exists = await contract.fileExists(hash); if(exists) { continue; }
+                    const signature = await signer.signMessage(ethers.utils.arrayify(hash)); const metaData = [file.name, category, caseId, finalName, "Batch"];
+                    const tx = await contract.storeFileHash(hash, file.size, true, signature, metaData); await tx.wait();
+                } catch (e) { console.error(e); if(!confirm(`Error on ${file.name}. Continue?`)) break; }
+            }
+            document.getElementById('statusMsg').innerText = "✅ Upload Complete!"; selectedFiles = []; renderFileList(); loadRegistry(); checkIdentity();
+        }
+
+        function filterTable() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('registryBody'); tbody.innerHTML = '';
+            const filtered = allRegistryData.filter(item => {
+                const r = item.record; const cat = r.category.toLowerCase(); let matchesTab = false;
+                if (currentFilter === 'forensics' && (cat === 'evidence' || cat === 'logs')) matchesTab = true; else if (currentFilter === 'education' && (cat === 'degree' || cat === 'certificate')) matchesTab = true; else if (currentFilter === 'general' && !['evidence','logs','degree','certificate'].includes(cat)) matchesTab = true;
+                if(!matchesTab) return false; return `${r.fileName} ${r.projectName} ${r.uploaderName} ${r.uploader}`.toLowerCase().includes(term);
+            });
+            if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No matches found.</td></tr>'; return; }
+            filtered.forEach(item => { const r = item.record; const badge = r.isVerifiedAccount ? '<i class="fas fa-check-circle text-brand-500 ml-1" title="Trusted"></i>' : ''; tbody.innerHTML += `<tr class="hover:bg-slate-50 transition"><td class="p-5 font-bold text-slate-700">${r.fileName}<div class="text-xs text-brand-600 mt-1 font-normal"><i class="fas fa-folder mr-1"></i>${r.projectName}</div></td><td class="p-5"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold border border-slate-200">${r.category}</span></td><td class="p-5 text-slate-600 text-sm font-medium">${r.uploaderName} ${badge}<div class="text-xs text-slate-400 font-mono font-normal">${r.uploader.substring(0,6)}...</div></td><td class="p-5 text-slate-500 text-xs font-mono">${new Date(r.timestamp * 1000).toLocaleDateString()}</td></tr>`; });
+        }
+
+        async function loadRegistry() {
+            if (!contract) return; document.getElementById('registryBody').innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Loading Blockchain Data...</td></tr>';
+            try { const hashes = await contract.getPublicFileHashes(); allRegistryData = []; for (let hash of hashes.slice().reverse()) { const data = await contract.verifyFile(hash); if (data[0]) allRegistryData.push({ hash: hash, record: data[1] }); } filterTable(); } catch(e) { console.error(e); }
+        }
+        async function loadHistory() {
+            if (!contract) return; const tbody = document.getElementById('historyBody'); tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Loading...</td></tr>';
+            try { const hashes = await contract.getUserFileHashes(userAddress); tbody.innerHTML = ''; for (let hash of hashes.slice().reverse()) { const data = await contract.verifyFile(hash); if (data[0]) { const r = data[1]; tbody.innerHTML += `<tr class="hover:bg-slate-50 transition"><td class="p-5 font-bold text-slate-700">${r.fileName}</td><td class="p-5"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">${r.category}</span></td><td class="p-5 text-slate-600 text-sm font-mono">${r.projectName}</td><td class="p-5 text-slate-500 text-xs font-mono">${new Date(r.timestamp * 1000).toLocaleString()}</td></tr>`; } } if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No uploads yet.</td></tr>'; } catch(e) { console.error(e); }
+        }
+
+        async function connectWallet() {
+            if (!window.ethereum) return alert("Install MetaMask!");
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                const { chainId } = await provider.getNetwork();
+                if (chainId !== 11155111) { try { await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xaa36a7' }] }); } catch (err) { return alert("Switch to Sepolia!"); } provider = new ethers.providers.Web3Provider(window.ethereum, "any"); }
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner(); userAddress = await signer.getAddress(); contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+                document.getElementById('connectBtn').innerHTML = `<i class="fas fa-check text-green-500"></i> ${userAddress.slice(0,6)}...`; document.getElementById('connectBtn').classList.add('bg-green-50', 'border-green-200');
+                try { const owner = await contract.owner(); if(userAddress.toLowerCase() === owner.toLowerCase()) document.getElementById('adminNavItem').classList.remove('hidden'); } catch(e) {}
+                checkIdentity(); loadRegistry();
+            } catch (err) { console.error(err); alert("Connection Failed"); }
+        }
+        async function checkIdentity() { if(!contract) return; try { const name = await contract.getIdentity(userAddress); if(name && name.length > 0) { registeredName = name; document.getElementById('uploaderName').value = name; document.getElementById('uploaderName').disabled = true; document.getElementById('idName').innerText = name; document.getElementById('userIdentityDisplay').classList.remove('hidden'); } } catch(e) {} }
+        async function handleAdminVerifyUser() { if(!contract) return alert("Connect Wallet!"); try { const tx = await contract.setTrustStatus(document.getElementById('adminInputAddr').value, true); await tx.wait(); alert("Verified!"); } catch(e) { alert("Error: " + e.message); } }
+    </script>
 </body>
 </html>
